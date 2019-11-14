@@ -1,0 +1,18 @@
+# NetBeans specific #
+warp/nbproject/private/
+warp/build/
+warp/nbbuild/
+warp/dist/
+warp/logs/
+warp/nbdist/
+warp/nbactions.xml
+warp/nb-configuration.xml
+warp/target/
+
+# Class Files #
+*.class
+
+# Package Files #
+*.war
+*.ear
+
