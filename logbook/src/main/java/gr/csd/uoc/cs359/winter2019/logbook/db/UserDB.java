@@ -239,7 +239,7 @@ public class UserDB {
                 int id = rs.getInt(1);
                 user.setUserID(id);
             }
-            System.out.println("#DB: The member was successfully added in the database.");
+            System.out.println("#DB: The member " + user.getUserName() + "  was successfully added in the database.");
 
         } catch (SQLException ex) {
             // Log exception
@@ -357,7 +357,7 @@ public class UserDB {
                     .append(" user_name = ").append("'").append(userName).append("';");
 
             stmt.executeUpdate(insQuery.toString());
-            System.out.println("#DB: The member was successfully deleted from the database.");
+            System.out.println("#DB: The member" + userName + " was successfully deleted from the database.");
 
         } catch (SQLException ex) {
             // Log exception
