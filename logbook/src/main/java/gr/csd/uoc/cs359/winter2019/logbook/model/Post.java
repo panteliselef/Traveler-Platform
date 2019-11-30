@@ -15,7 +15,7 @@ public class Post implements Serializable {
 
     private Integer postID = 0;
     private String userName = "";
-    private String comment = "";
+    private String description = "";
     private String resourceURL = "";
     private String imageURL = "";
     private String imageBase64 = "";
@@ -37,6 +37,14 @@ public class Post implements Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getResourceURL() {
@@ -94,7 +102,7 @@ public class Post implements Serializable {
      */
     public void checkFields() throws Exception {
         // Check that everything is ok
-        if ((comment == null || comment.trim().isEmpty())
+        if ((description == null || description.trim().isEmpty())
                 && userName == null || userName.trim().isEmpty()) {
             throw new Exception("Missing fields!");  // Something went wrong with the fields
         }
@@ -110,6 +118,7 @@ public class Post implements Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append("POST: ").append(postID).append("\n")
                 .append("userName: ").append(userName).append("\n")
+                .append("description: ").append(description).append("\n")
                 .append("resourceURL: ").append(resourceURL).append("\n")
                 .append("imageURL: ").append(imageURL).append("\n")
                 .append("imageBase64: ").append(imageBase64).append("\n")

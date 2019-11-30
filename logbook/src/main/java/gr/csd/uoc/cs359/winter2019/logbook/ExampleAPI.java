@@ -84,6 +84,7 @@ public class ExampleAPI {
 
         Post post = new Post();
         post.setUserName("kernelpanic");
+        post.setDescription("This is my first post");
         PostDB.addPost(post);
 
         System.out.println("==>Deleting");

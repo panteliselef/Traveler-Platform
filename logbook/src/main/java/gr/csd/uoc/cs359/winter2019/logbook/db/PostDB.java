@@ -53,6 +53,7 @@ public class PostDB {
                 Post post = new Post();
                 post.setPostID(res.getInt("post_id"));
                 post.setUserName(res.getString("user_name"));
+                post.setDescription(res.getString("description"));
                 post.setResourceURL(res.getString("resource_URL"));
                 post.setImageURL(res.getString("image_URL"));
                 post.setImageBase64(res.getString("image_base64"));
@@ -104,6 +105,7 @@ public class PostDB {
                 post = new Post();
                 post.setPostID(res.getInt("post_id"));
                 post.setUserName(res.getString("user_name"));
+                post.setDescription(res.getString("description"));
                 post.setResourceURL(res.getString("resource_URL"));
                 post.setImageURL(res.getString("image_URL"));
                 post.setImageBase64(res.getString("image_base64"));
@@ -153,11 +155,12 @@ public class PostDB {
             StringBuilder insQuery = new StringBuilder();
 
             insQuery.append("INSERT INTO ")
-                    .append(" posts (user_name, resource_URL, "
+                    .append(" posts (user_name, description, resource_URL, "
                             + "image_URL, image_base64, latitude, longitude, created_at, "
                             + "created_by) ")
                     .append(" VALUES (")
                     .append("'").append(post.getUserName()).append("',")
+                    .append("'").append(post.getDescription()).append("',")
                     .append("'").append(post.getResourceURL()).append("',")
                     .append("'").append(post.getImageURL()).append("',")
                     .append("'").append(post.getImageBase64()).append("',")
@@ -216,6 +219,7 @@ public class PostDB {
 
             insQuery.append("UPDATE posts ")
                     .append(" SET ")
+                    .append(" description = ").append("'").append(post.getDescription()).append("',")
                     .append(" resource_URL = ").append("'").append(post.getResourceURL()).append("',")
                     .append(" image_URL = ").append("'").append(post.getImageURL()).append("',")
                     .append(" image_base64 = ").append("'").append(post.getImageBase64()).append("',")
@@ -264,6 +268,7 @@ public class PostDB {
                 Post post = new Post();
                 post.setPostID(res.getInt("post_id"));
                 post.setUserName(res.getString("user_name"));
+                post.setDescription(res.getString("description"));
                 post.setResourceURL(res.getString("resource_URL"));
                 post.setImageURL(res.getString("image_URL"));
                 post.setImageBase64(res.getString("image_base64"));
@@ -315,6 +320,7 @@ public class PostDB {
                 Post post = new Post();
                 post.setPostID(res.getInt("post_id"));
                 post.setUserName(res.getString("user_name"));
+                post.setDescription(res.getString("description"));
                 post.setResourceURL(res.getString("resource_URL"));
                 post.setImageURL(res.getString("image_URL"));
                 post.setImageBase64(res.getString("image_base64"));
