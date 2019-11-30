@@ -5,7 +5,9 @@
  */
 package gr.csd.uoc.cs359.winter2019.logbook;
 
+import gr.csd.uoc.cs359.winter2019.logbook.db.PostDB;
 import gr.csd.uoc.cs359.winter2019.logbook.db.UserDB;
+import gr.csd.uoc.cs359.winter2019.logbook.model.Post;
 import gr.csd.uoc.cs359.winter2019.logbook.model.User;
 import java.util.List;
 
@@ -79,6 +81,10 @@ public class ExampleAPI {
             System.out.println("==>Updated");
             System.out.println(UserDB.getUser("turing"));
         }
+
+        Post post = new Post();
+        post.setUserName("kernelpanic");
+        PostDB.addPost(post);
 
         System.out.println("==>Deleting");
         UserDB.deleteUser("turing");

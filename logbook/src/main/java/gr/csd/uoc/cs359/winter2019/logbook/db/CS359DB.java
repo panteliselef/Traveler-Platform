@@ -23,7 +23,7 @@ public class CS359DB {
 
     /**
      * Attempts to establish a database connection Using mariadb
-       *
+     *
      * @return a connection to the database
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
@@ -36,6 +36,5 @@ public class CS359DB {
     public static String getUserName() {
         return UNAME;
     }
-
 
 }
