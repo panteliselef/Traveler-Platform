@@ -1,7 +1,10 @@
 import com.google.gson.Gson;
+
+import gr.csd.uoc.cs359.winter2019.logbook.db.PostDB;
 import gr.csd.uoc.cs359.winter2019.logbook.db.UserDB;
 import gr.csd.uoc.cs359.winter2019.logbook.model.JSONErrorResponse;
 import gr.csd.uoc.cs359.winter2019.logbook.model.JSONResponse;
+import gr.csd.uoc.cs359.winter2019.logbook.model.Post;
 import gr.csd.uoc.cs359.winter2019.logbook.model.User;
 
 import javax.servlet.ServletException;
@@ -10,6 +13,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @WebServlet("/user")
@@ -64,6 +69,7 @@ public class UserServlet extends HttpServlet {
         resp.addHeader("Access-Control-Max-Age", "1728000");
         resp.addHeader("Access-Control-Allow-Credentials","true");
         PrintWriter out = resp.getWriter();
+        List<Post> allPosts = new ArrayList<>();
 
 
         String username = getPartValue(req.getPart("username"));
@@ -78,6 +84,18 @@ public class UserServlet extends HttpServlet {
         try {
             User user = UserDB.getUser(username);
             if (password.equals(user.getPassword())){
+            	allPosts = PostDB.getPosts();
+
+            	allPosts.forEach(post ->{
+            		if(post.getUserName().equals(username)) {
+            			try {
+							PostDB.deletePost(post);
+						} catch (ClassNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+            		}
+            	});
                 UserDB.deleteUser(user);
                 HttpSession session = req.getSession();
                 session.invalidate();
