@@ -83,48 +83,49 @@ public class PostServlet extends HttpServlet {
 //                            PostDB.getTop10RecentPosts();
                             response = new JSONResponse("Posts Found", 200, PostDB.getTop10RecentPosts());
                         }
-                    }else if(mode!= null && mode.contentEquals("top_ten_byRating")) {
-                    	if(username != null) {
-                    		List<Post> Posts = new ArrayList<>();
-                    		List<Rating> PostRatings = new ArrayList<>();
-                    		List<Integer> PostRating = new ArrayList<>();
-                    		List<Post> SortedPosts = new ArrayList<>();
-                    		
-                    		Posts = PostDB.getTop10RecentPosts();
-                    		
-                    		int avg = 0;
-                    		for(Post post: Posts) {
-                      			try {
-        							PostRatings = RatingDB.getRatings(post.getPostID());
-        							
-        							for(Rating rating: PostRatings) {
-        								avg+=rating.getRate();
-        								
-        							}
-        							avg = avg / PostRatings.size();
-        						} catch (ClassNotFoundException e) {
-        							e.printStackTrace();
-        						}
-                      			PostRating.add(avg);
-                    		}
-    
-    
-                    		
-                    		for(int j=5; j>0; j--) {
-                    			for(int i=0; i<Posts.size();i++) {
-                    				if(PostRating.get(i) == j) {
-                    					SortedPosts.add(Posts.get(i));
-                    				}
-                    			}
-                    		}
-                    		response = new JSONResponse("Posts Found", 200, SortedPosts);
-                    	}
-                    	
-                    	
-                    	
-                    	
-                    	// when we looking for a specific post
-                    }else{
+                    } else if (mode != null && mode.equals("top_ten_byRating")) {
+
+//                        response = new JSONResponse("Posts Found", 200, "This is test");
+
+                        List<Post> Posts = new ArrayList<>();
+                        List<Rating> PostRatings = new ArrayList<>();
+                        List<Integer> PostRating = new ArrayList<>();
+                        List<Post> SortedPosts = new ArrayList<>();
+
+                        Posts = PostDB.getTop10RecentPosts();
+
+                        int avg = 0;
+                        for (Post post : Posts) {
+                            try {
+                                PostRatings = RatingDB.getRatings(post.getPostID());
+
+                                for (Rating rating : PostRatings) {
+                                    avg += rating.getRate();
+                                }
+                                if (PostRating.size() == 0) {
+                                    avg = 0;
+                                } else {
+                                    avg = avg / PostRatings.size();
+                                }
+                            } catch (ClassNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                            PostRating.add(avg);
+                        }
+
+
+                        for (int j = 5; j > 0; j--) {
+                            for (int i = 0; i < Posts.size(); i++) {
+                                if (PostRating.get(i) == j) {
+                                    SortedPosts.add(Posts.get(i));
+                                }
+                            }
+                        }
+                        response = new JSONResponse("Posts Found", 200, SortedPosts);
+
+
+                        // when we looking for a specific post
+                    } else {
                         if (postId != null) {
                             response = new JSONResponse("Post Found", 200, PostDB.getPost(Integer.parseInt(postId)));
                         }
@@ -221,22 +222,21 @@ public class PostServlet extends HttpServlet {
             Post tmpPost = PostDB.getPost(Integer.parseInt(delete_id));
             currentUser = UserDB.getUser(username_);
 
-            if(currentUser == null){
+            if (currentUser == null) {
                 JSONErrorResponse resp1 = new JSONErrorResponse("You're not logged in", 400);
                 resp.setStatus(400);
                 out.print(gson.toJson(resp1));
             }
-            if(tmpPost == null){
+            if (tmpPost == null) {
                 JSONErrorResponse resp1 = new JSONErrorResponse("post not found", 404);
                 resp.setStatus(404);
                 out.print(gson.toJson(resp1));
-            }
-            else if (currentUser.getUserName().equals(tmpPost.getUserName())) {
+            } else if (currentUser.getUserName().equals(tmpPost.getUserName())) {
                 PostDB.deletePost(Integer.parseInt(delete_id));
                 JSONErrorResponse resp1 = new JSONErrorResponse("Successfully delete post", 200);
                 resp.setStatus(200);
                 out.print(gson.toJson(resp1));
-            }else{
+            } else {
                 JSONErrorResponse resp1 = new JSONErrorResponse("post is not yours to delete", 404);
                 resp.setStatus(400);
                 out.print(gson.toJson(resp1));

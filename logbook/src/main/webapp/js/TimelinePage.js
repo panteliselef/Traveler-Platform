@@ -143,7 +143,10 @@ const showTimelinePage = () => {
 
     posts.innerHTML = `${PostPlaceholder().repeat(3)}`
 
-	showCreatPost(document.getElementsByClassName('timeline-layout')[0].children[1]);
+  showCreatPost(document.getElementsByClassName('timeline-layout')[0].children[1]);
+  
+  showFilterButton(document.getElementsByClassName("timeline-create-post")[0]);
+
 
 	document.getElementById('btnLogout').addEventListener('click', (e) => {
 		mySPA.showLoadingPage();
@@ -158,23 +161,7 @@ const showTimelinePage = () => {
 		});
     });
     
-	ajaxRequest('GET', '/logbook/master?redirect=post&mode=top_ten', null, ({ message, statusCode, result }) => {
-		if (statusCode === 200) {
-			posts.innerHTML = result
-				.map((post) => {
-					return Post(post);
-				})
-				.join('');
-			mySPA.setState({ posts: result });
-      setDeleteListeners(result);
-      
-      result.forEach(post => {
-
-        showCreateComment(post.postID);
-        
-      });
-		}
-	});
+  showPostsOnTimeline();
 
 	// document.getElementById('timeline-modal-close').addEventListener('click',()=>{
 	//     document.getElementsByClassName("timeline-modal-view")[0].style.display = 'none';

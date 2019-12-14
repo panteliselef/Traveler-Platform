@@ -200,24 +200,11 @@ public class CommetServlet extends HttpServlet {
         resp.addHeader("Access-Control-Max-Age", "1728000");
         resp.addHeader("Access-Control-Allow-Credentials", "true");
         PrintWriter out = resp.getWriter();
-        
-        
-        String username = getPartValue(req.getPart("userName"));
-        String postID = getPartValue(req.getPart("postID"));
+
         String comment = getPartValue(req.getPart("comment"));
-        String createdAt = getPartValue(req.getPart("createdAt"));
         String modifiedAt = getPartValue(req.getPart("modifiedAt"));
         String ID = getPartValue(req.getPart("ID"));
-        
-        Comment UpdateComment = new Comment();
-        
-        UpdateComment.setUserName(username);
-        UpdateComment.setPostID(Integer.parseInt(postID));
-        UpdateComment.setComment(comment);
-        UpdateComment.setCreated(createdAt);
-        UpdateComment.setModified(modifiedAt);
-        UpdateComment.setID(Integer.parseInt(ID));
-        
+
         String username_Session = (String) session.getAttribute("username");
         User currentUser = null;
         
@@ -236,8 +223,10 @@ public class CommetServlet extends HttpServlet {
                 resp.setStatus(404);
                 out.print(gson.toJson(resp1));
             }else if (currentUser.getUserName().equals(tmpComment.getUserName())) {
-                CommentDB.updateComment(UpdateComment);
-                JSONErrorResponse resp1 = new JSONErrorResponse("Successfully update comment", 200);
+                tmpComment.setComment(comment);
+                tmpComment.setModified(modifiedAt);
+                CommentDB.updateComment(tmpComment);
+                JSONResponse resp1 = new JSONResponse("Successfully update comment", 200,tmpComment);
                 resp.setStatus(200);
                 out.print(gson.toJson(resp1));
             }else{

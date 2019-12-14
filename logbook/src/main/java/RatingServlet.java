@@ -4,6 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +24,8 @@ import gr.csd.uoc.cs359.winter2019.logbook.model.Post;
 import gr.csd.uoc.cs359.winter2019.logbook.model.Rating;
 import gr.csd.uoc.cs359.winter2019.logbook.model.User;
 
-@WebServlet("/RatingServlet")
+@WebServlet("/rating")
+@MultipartConfig
 public class RatingServlet extends HttpServlet {
 	
     private Gson gson = new Gson();
@@ -44,7 +46,7 @@ public class RatingServlet extends HttpServlet {
         resp.addHeader("Access-Control-Max-Age", "1728000");
         resp.addHeader("Access-Control-Allow-Credentials", "true");
 
-        String id = req.getParameter("ID");
+        String id = req.getParameter("postID");
 
         PrintWriter out = resp.getWriter();
 
@@ -65,7 +67,7 @@ public class RatingServlet extends HttpServlet {
             }
             if (currentUser != null) {
                 try {
-                    JSONResponse response = new JSONResponse("Comments Found", 200, RatingDB.getRating(Integer.parseInt(id)));
+                    JSONResponse response = new JSONResponse("Comments Found", 200, RatingDB.getRatings(Integer.parseInt(id)));
                     out.print(gson.toJson(response));
 
                 } catch (ClassNotFoundException e) {
@@ -95,7 +97,7 @@ public class RatingServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
         
         String username = getPartValue(req.getPart("userName"));
-        String postID = getPartValue(req.getPart("PostID"));
+        String postID = getPartValue(req.getPart("postID"));
         String rate = getPartValue(req.getPart("rate"));
         
         Rating tmpRating = new Rating();

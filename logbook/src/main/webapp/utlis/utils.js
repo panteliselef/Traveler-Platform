@@ -50,6 +50,7 @@ const fetchComments = (postID) => {
 							</div>
 							<div class="timeline-comment-actions">
 								<p class="comment-action-delete">Delete</p>
+								<p class="comment-action-edit">Edit</p>
 							</div> 
 						</div>
 						
@@ -66,19 +67,33 @@ const fetchComments = (postID) => {
 				.getElementById(comment.ID)
 				.getElementsByClassName('comment-action-delete')[0]
 				.addEventListener('click', (e) => {
-
 					let data = new FormData();
-					data.append('commentID',comment.ID);
-					ajaxRequest(
-						'DELETE',
-						`/logbook/comments`,
-						data,
-						({ statusCode, result }) => {
-							if (statusCode != 200) return;
-							fetchComments(postID);
-						}
-					);
+					data.append('commentID', comment.ID);
+					ajaxRequest('DELETE', `/logbook/comments`, data, ({ statusCode, result }) => {
+						if (statusCode != 200) return;
+						fetchComments(postID);
+					});
 					console.log(comment.ID);
+				});
+
+			document
+				.getElementById(comment.ID)
+				.getElementsByClassName('comment-action-edit')[0]
+				.addEventListener('click', (e) => {
+					var newcomment = prompt('Edit comment:', document.getElementById(comment.ID).getElementsByClassName('timeline-post-comment-msg')[0].innerText);
+					if (newcomment == null || newcomment == '') {
+						console = 'User cancelled the prompt.';
+					} else {
+
+						let data = new FormData();
+						data.append('ID',comment.ID);
+						data.append('comment',newcomment);
+						data.append('modifiedAt',new Date());
+						ajaxRequest("PUT",`/logbook/comments`,data,({result})=>{
+							console.log(result);
+						});
+					}
+					
 				});
 		});
 
@@ -108,6 +123,10 @@ const setDeleteListeners = (arr) => {
 			}
 
 			if (findParentWithClass('timeline-post-comments-container', e.target) != null) {
+				return;
+			}
+
+			if (findParentWithClass('timeline-post-ratings-container', e.target) != null) {
 				return;
 			}
 			console.log(e.target, e.target.tagName);
@@ -146,6 +165,65 @@ const setDeleteListeners = (arr) => {
 				createMap(location.lon, location.lat, document.getElementsByClassName('timeline-modal-view-map')[0]);
 			}
 		});
+	});
+};
+
+const showPostsOnTimeline = () => {
+	let posts = document.getElementById('timeline-posts');
+	ajaxRequest('GET', '/logbook/master?redirect=post&mode=top_ten', null, ({ message, statusCode, result }) => {
+		if (statusCode === 200) {
+			posts.innerHTML = result
+				.map((post) => {
+					return Post(post);
+				})
+				.join('');
+			mySPA.setState({ posts: result });
+			setDeleteListeners(result);
+
+			result.forEach((post) => {
+				ajaxRequest('GET', `/logbook/rating?postID=${post.postID}`, null, ({ result }) => {
+					let avg = 0;
+					result.forEach((rating) => {
+						avg += rating.rate;
+
+						if (rating.userName === mySPA.getState('user').userName) {
+							document.getElementById(`option-${rating.rate}-${post.postID}`).classList.add('selected');
+						}
+					});
+					avg = avg / result.length;
+
+					if (`${avg}` === 'NaN') {
+						document
+							.getElementById(post.postID)
+							.getElementsByClassName('timeline-post-ratings-score')[0].innerText = `No Ratings`;
+					} else {
+						document
+							.getElementById(post.postID)
+							.getElementsByClassName('timeline-post-ratings-score')[0].innerText = `${avg.toFixed(
+							1
+						)} out of ${result.length} Ratings`;
+					}
+				});
+				document
+					.getElementById(post.postID)
+					.getElementsByClassName('timeline-post-ratings-container')[0].innerHTML = RatingSystem(post.postID);
+				Array.from(
+					document.getElementById(post.postID).getElementsByClassName('timeline-post-ratings-option')
+				).forEach((option) => {
+					option.addEventListener('click', (e) => {
+						let data = new FormData();
+						data.append('userName', mySPA.getState('user').userName);
+						data.append('rate', e.target.innerText);
+						data.append('postID', post.postID);
+						ajaxRequest('POST', '/logbook/rating', data, ({ result }) => {
+							console.log(result);
+						});
+						console.log(e.target.innerText, post.postID);
+					});
+				});
+				showCreateComment(post.postID);
+			});
+		}
 	});
 };
 

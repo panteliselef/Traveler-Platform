@@ -110,6 +110,8 @@ const Post = (post) => {
             </div>`
 				: ``}
 
+					<div class="timeline-post-ratings-container">
+					</div>
 					<div class="timeline-post-comments-container"></div>
         </div>
     `;

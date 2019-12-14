@@ -469,7 +469,7 @@
 	border-top: 1px solid #eee;
 	display: flex;
 	margin-top: 1em;
-  flex-direction: column;
+	flex-direction: column;
 }
 
 .timeline-comments-create {
@@ -480,11 +480,11 @@
 }
 
 .timeline-post-comment {
-  padding: .5em .2em;
+	padding: .5em .2em;
 }
 .timeline-post-comment-username {
-  font-size: 1em;
-  font-weight: 500;
+	font-size: 1em;
+	font-weight: 500;
 }
 
 .timeline-post-comment-username span {
@@ -493,8 +493,8 @@
 }
 
 .timeline-post-comment-msg {
-  width: 100%;
-  font-size: 1em;
+	width: 100%;
+	font-size: 1em;
 }
 
 .timeline-comment-actions {
@@ -505,21 +505,19 @@
 	text-decoration: underline;
 	color: #17bebb;
 	font-size: .8em;
-	margin: 0;
+	margin: 0 1em;
 	cursor: pointer;
 }
 
-.timeline-comment-actions p:hover{
+.timeline-comment-actions p:hover {
 	color: #333;
 }
 
-
-
 .timeline-comments-create input {
-  width: 85%;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+	width: 85%;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
 	border: none;
 	background: #eee;
 	font-size: 1em;
@@ -527,7 +525,55 @@
 	border-radius: 100px;
 }
 .timeline-comments-button-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/*Ratings */
+
+.timeline-post-ratings-container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.timeline-post-ratings-score {
+	font-size: 1.2em;
+}
+
+.timeline-post-ratings-options {
+	display: flex;
+}
+
+.timeline-post-ratings-option {
+	display: inline-flex;
+	padding: 1.5em;
+	background-color: #eee;
+	flex-grow: 1;
+	margin: .1em;
+	justify-content: center;
+	align-items: center;
+	border-radius: .2em;
+}
+
+.timeline-post-ratings-option:hover,
+.timeline-post-ratings-option.selected {
+	background-color: #17bebb;
+}
+
+.filter-button {
+	display: inline-block;
+	padding: 1em;
+	text-transform: capitalize;
+	font-weight: 500;
+	font-size: 1.1em;
+	user-select: none;
+	cursor: pointer;
+	border-radius: .3em;
+	display: inline-flex;
+	flex-grow: 0;
+}
+.filter-button:hover {
+	background-color: #eee;
 }
