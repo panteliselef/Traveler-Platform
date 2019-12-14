@@ -1,16 +1,98 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>LogBook | csd3942</title>
+  <link rel="stylesheet" href="./css/timeline.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
+  <link rel="stylesheet" href="./css/facebook-animation.css">
+  <script defer src="http://www.openlayers.org/api/OpenLayers.js"></script>
+  <!-- <script src="./js/logbook.js"></script> -->
+  <script src="./js/ajaxRequest.js"></script>
+  <script src="./face++/js/face.js"></script>
+  <script src="./utlis/utils.js"></script>
+  <script src="./js/Components/CreatePost.js"></script>
+  <script src="./js/Components/Post.js"></script>
+  <script src="./js/Validator.js"></script>
+  <script src="./js/Router.js"></script>
+  <script src="./js/DashboardPage.js"></script>
+  <script src="./js/SignInPage.js"></script>
+  <script src="./js/SignUpPage.js"></script>
+  <script src="./js/ProfilePage.js"></script>
+  <script src="./js/EditPage.js"></script>
+  <script src="./js/TimelinePage.js"></script>
+  <script src="./js/App.js"></script>
+</head>
+
+<body>
+  <!-- <nav class="developer-menu">
+    <h5 style="margin: unset;">Dev Menu</h5>
+    <ul>
+      <li id="to_dashboard">Dashboard</li>
+      <li id="to_signup">Sign Up</li>
+    </ul>
+  </nav> -->
+
+  <div class="timeline-modal-view">
+    <div id="timeline-modal-close">X</div>
+    <div id="timeline-post" style="display: flex;flex-direction: column;">
+
+    </div>
+  </div>
+
+  <section class="video-section">
+    <div class="video-container">
+      <div style="position: relative;width: 100%;height: 100%;">
+        <video id='video' autoplay></video>
+        <div class="canvas-container">
+          <canvas id='canvas' width='853' height='480'></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="video-container-controls">
+      <div>
+        <div id="close-video">
+          <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+            <path fill="#000000"
+              d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+          </svg>
+        </div>
+      </div>
+      <span id="video-spinner" class="loading-spinner"></span>
+      <div class="video-button-container">
+        <input class="primary-btn" type='button' id="snap" value='Take Photo'>
+        <input class="primary-btn" type='button' id="upload" value='Use Image'>
+      </div>
+    </div>
+  </section>
+
+
+  <div id="root"></div>
+
+  <script>
+    let mySPA = new App();
+    mySPA.init();
+    faceRec.init();
+    // mySPA.goToProfilePage('elefcodes');
+    // mySPA.dev();
+
+
+    // Close video
+    document.getElementById('close-video').addEventListener('click', (e) => {
+      document.getElementsByClassName('video-section')[0].style.display = 'none';
+      document.getElementsByTagName("body")[0].style.overflowY = "unset";
+      faceRec.pause();
+    });
+
+    document.getElementById('timeline-modal-close').addEventListener('click', () => {
+      document.getElementsByClassName("timeline-modal-view")[0].style.display = 'none';
+      document.getElementById('timeline-post').innerHTML = '';
+    });
+  </script>
+</body>
+
 </html>

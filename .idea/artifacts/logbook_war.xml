@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="logbook:war">
+    <output-path>$PROJECT_DIR$/logbook/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>logbook</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="logbook-0.1.war">
+      <element id="artifact" artifact-name="logbook:war exploded" />
+    </root>
+  </artifact>
+</component>

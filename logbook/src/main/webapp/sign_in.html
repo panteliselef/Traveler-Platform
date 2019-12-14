@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Sign In | LogBook</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="./face++/js/face.js"></script>
+  <script src="./js/sign_in.js"></script>
+</head>
+
+<body>
+  <section class="video-section">
+    <div class="video-container">
+      <div style="position: relative;width: 100%;height: 100%;">
+        <video id='video' autoplay></video>
+        <div class="canvas-container">
+          <canvas id='canvas' width='853' height='480'></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="video-container-controls">
+      <div>
+        <div id="close-video">
+          <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+            <path fill="#000000"
+              d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+          </svg>
+        </div>
+      </div>
+      <span id="video-spinner" class="loading-spinner"></span>
+      <div class="video-button-container">
+        <input class="primary-btn" type='button' id="snap" value='Take Photo'>
+        <input class="primary-btn" type='button' id="upload_search" value='Upload Image'>
+      </div>
+    </div>
+  </section>
+  <img class="shape-aqua" alt="aqua-shape-cover" src="./assets/shape-aqua.svg" />
+  <section class="main-section light">
+    <form>
+      <h2>Sign in 😁</h2>
+      <div class="grid-layout-3-col">
+        <div class="col">
+          <div class="input-item">
+            <label>
+              Username
+            </label>
+            <input type="text" id="username" minlength="8" pattern="[A-Za-z]{8,}" title="8 or more latin characters">
+          </div>
+          <div class="input-item">
+            <label>
+              Password
+            </label>
+            <input id="inputPassword" type="password" minlength="8" maxlength="10"
+              pattern="(?=.*\d)(?=.*[A-Za-z])(?=.*\W])">
+          </div>
+        </div>
+        <div class="col">
+          <div id="face_recogn_container" class="input-item">
+            <label>
+              Use Face Recoginition
+            </label>
+            <div class="radio-button-collection">
+              <div class="radio-button-container">
+                <input type="radio" name="face_recogn" value="no" checked>
+                <span class="custom-radio">👎</span>
+              </div>
+              <div class="radio-button-container">
+                <input type="radio" name="face_recogn" value="yes">
+                <span class="custom-radio">👍</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </section>
+  <img class="shape-somon" alt="somon-shape-cover" src="./assets/shape-somon.svg" />
+  <script>
+    faceRec.init();
+  </script>
+</body>
