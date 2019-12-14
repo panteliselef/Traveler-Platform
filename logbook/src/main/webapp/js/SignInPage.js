@@ -37,11 +37,10 @@ const showSignIn = () => {
 	const rootDiv = document.getElementById('root');
 	rootDiv.innerHTML = SignInPage();
 
-	// document.getElementById('signin_username').value = 'elefcodes';
-	// document.getElementById('signin_password').value = 'elef123#';
-
-	document.getElementById('signin_username').value = 'whynotdoit';
-	document.getElementById('signin_password').value = 'aaZZa44@';
+	document.getElementById('signin_username').value = 'elefcodes';
+	document.getElementById('signin_password').value = 'elef123#'; 
+	// document.getElementById('signin_username').value = 'whynotdoit';
+	// document.getElementById('signin_password').value = 'aaZZa44@';
 
 	document.getElementById('btnSubmit').addEventListener('click', (e) => {
 

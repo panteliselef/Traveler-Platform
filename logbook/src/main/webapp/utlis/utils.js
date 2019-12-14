@@ -31,8 +31,59 @@ const findParentWithClass = (cssClass, child) => {
 	let target = child;
 	while (!inList(cssClass, target.classList)) {
 		target = target.parentElement;
+		if (target == null) return null;
 	}
 	return target;
+};
+
+const fetchComments = (postID) => {
+	ajaxRequest('GET', `/logbook/comments?postID=${postID}`, null, ({ statusCode, result, message }) => {
+		if (statusCode != 200);
+		let commentsHTML = result
+			.map((comment) => {
+				return `
+						<div id="${comment.ID}" class="timeline-post-comment">
+							<div class="timeline-post-comment-username">${comment.userName}
+								<span>created at ${new Date(comment.createdAt).toLocaleString()}</span>
+							</div>
+							<div class="timeline-post-comment-msg">${comment.comment}
+							</div>
+							<div class="timeline-comment-actions">
+								<p class="comment-action-delete">Delete</p>
+							</div> 
+						</div>
+						
+					`;
+			})
+			.join('');
+
+		document
+			.getElementById('timeline-post')
+			.getElementsByClassName('timeline-post-comments-container')[0].innerHTML = commentsHTML;
+
+		result.forEach((comment) => {
+			document
+				.getElementById(comment.ID)
+				.getElementsByClassName('comment-action-delete')[0]
+				.addEventListener('click', (e) => {
+
+					let data = new FormData();
+					data.append('commentID',comment.ID);
+					ajaxRequest(
+						'DELETE',
+						`/logbook/comments`,
+						data,
+						({ statusCode, result }) => {
+							if (statusCode != 200) return;
+							fetchComments(postID);
+						}
+					);
+					console.log(comment.ID);
+				});
+		});
+
+		console.log(result);
+	});
 };
 
 const setDeleteListeners = (arr) => {
@@ -55,8 +106,12 @@ const setDeleteListeners = (arr) => {
 
 				return;
 			}
-			console.log(e.target,e.target.tagName);
-			if(e.target.tagName === 'A') return;
+
+			if (findParentWithClass('timeline-post-comments-container', e.target) != null) {
+				return;
+			}
+			console.log(e.target, e.target.tagName);
+			if (e.target.tagName === 'A') return;
 			let target = findParentWithClass('timeline-post', e.target);
 			let id = target.id;
 			let post = mySPA.getState('posts').filter((post) => post.postID == id)[0];
@@ -82,13 +137,14 @@ const setDeleteListeners = (arr) => {
 
 			document.getElementById('timeline-post').innerHTML = ModalPost(post, imageSrc, dateStr, location);
 
+			fetchComments(post.postID);
+
 			document.getElementsByClassName('timeline-modal-view')[0].style.display = 'flex';
 
 			if (location) {
 				console.log(document.getElementsByClassName('timeline-modal-view-map')[0]);
 				createMap(location.lon, location.lat, document.getElementsByClassName('timeline-modal-view-map')[0]);
 			}
-			console.log(location);
 		});
 	});
 };
