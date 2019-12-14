@@ -102,6 +102,31 @@ public class UserServlet extends HttpServlet {
             		}
             	});
             	
+            	//delete all comments of a user
+            	allComments = CommentDB.getComments();
+            	allComments.forEach(comment ->{
+            		if(comment.getUserName().equals(username)) {
+            			try {
+							CommentDB.deleteComment(comment);
+						} catch (ClassNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+            		}
+            	});
+            	
+            	//delete all ratings of a user
+            	allRatings = RatingDB.getRatings();
+            	allRatings.forEach(rating -> {
+            		if(rating.getUserName().equals(username));
+            		try {
+						RatingDB.deleteRating(rating);
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+            	});
+            	
             	
             	            	
                 UserDB.deleteUser(user);
