@@ -1,10 +1,14 @@
 import com.google.gson.Gson;
 
+import gr.csd.uoc.cs359.winter2019.logbook.db.CommentDB;
 import gr.csd.uoc.cs359.winter2019.logbook.db.PostDB;
+import gr.csd.uoc.cs359.winter2019.logbook.db.RatingDB;
 import gr.csd.uoc.cs359.winter2019.logbook.db.UserDB;
+import gr.csd.uoc.cs359.winter2019.logbook.model.Comment;
 import gr.csd.uoc.cs359.winter2019.logbook.model.JSONErrorResponse;
 import gr.csd.uoc.cs359.winter2019.logbook.model.JSONResponse;
 import gr.csd.uoc.cs359.winter2019.logbook.model.Post;
+import gr.csd.uoc.cs359.winter2019.logbook.model.Rating;
 import gr.csd.uoc.cs359.winter2019.logbook.model.User;
 
 import javax.servlet.ServletException;
@@ -55,8 +59,6 @@ public class UserServlet extends HttpServlet {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -70,6 +72,8 @@ public class UserServlet extends HttpServlet {
         resp.addHeader("Access-Control-Allow-Credentials","true");
         PrintWriter out = resp.getWriter();
         List<Post> allPosts = new ArrayList<>();
+        List<Comment> allComments = new ArrayList<>();
+        List<Rating> allRatings = new ArrayList<>();
 
 
         String username = getPartValue(req.getPart("username"));
@@ -83,9 +87,10 @@ public class UserServlet extends HttpServlet {
         }
         try {
             User user = UserDB.getUser(username);
-            if (password.equals(user.getPassword())){
+            if(password.equals(user.getPassword())){
+            	
+            	//delete all posts of a user
             	allPosts = PostDB.getPosts();
-
             	allPosts.forEach(post ->{
             		if(post.getUserName().equals(username)) {
             			try {
@@ -96,6 +101,9 @@ public class UserServlet extends HttpServlet {
 						}
             		}
             	});
+            	
+            	
+            	            	
                 UserDB.deleteUser(user);
                 HttpSession session = req.getSession();
                 session.invalidate();
@@ -110,7 +118,6 @@ public class UserServlet extends HttpServlet {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
         out.flush();
     }
 }
