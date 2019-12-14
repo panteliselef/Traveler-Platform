@@ -1,0 +1,152 @@
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
+
+import com.google.gson.Gson;
+
+import gr.csd.uoc.cs359.winter2019.logbook.db.CommentDB;
+import gr.csd.uoc.cs359.winter2019.logbook.db.PostDB;
+import gr.csd.uoc.cs359.winter2019.logbook.db.UserDB;
+import gr.csd.uoc.cs359.winter2019.logbook.model.Comment;
+import gr.csd.uoc.cs359.winter2019.logbook.model.JSONErrorResponse;
+import gr.csd.uoc.cs359.winter2019.logbook.model.JSONResponse;
+import gr.csd.uoc.cs359.winter2019.logbook.model.Post;
+import gr.csd.uoc.cs359.winter2019.logbook.model.User;
+
+/**
+ * Servlet implementation class CommetServlet
+ */
+@WebServlet("/CommetServlet")
+public class CommetServlet extends HttpServlet {
+	
+    private Gson gson = new Gson();
+
+    private String getPartValue(Part part) throws IOException {
+        if (part == null) return null;
+        return new String(part.getInputStream().readAllBytes());
+    
+    }
+   
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+
+
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doGet(req, resp);
+		
+		resp.setContentType("application/json");
+        HttpSession session = req.getSession(true);
+
+        resp.addHeader("Access-Control-Allow-Origin", req.getHeader("Origin"));
+        resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+        resp.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+        resp.addHeader("Access-Control-Max-Age", "1728000");
+        resp.addHeader("Access-Control-Allow-Credentials", "true");
+        PrintWriter out = resp.getWriter();
+        
+        String username = getPartValue(req.getPart("userName"));
+        String postID = getPartValue(req.getPart("postID"));
+        String comment = getPartValue(req.getPart("comment"));
+        String createdAt = getPartValue(req.getPart("createdAt"));
+        String modifiedAt = getPartValue(req.getPart("modifiedAt"));
+        String ID = getPartValue(req.getPart("ID"));
+        
+        Comment tmpComment = new Comment();
+        
+        tmpComment.setUserName(username);
+        tmpComment.setPostID(Integer.parseInt(postID));
+        tmpComment.setComment(comment);
+        tmpComment.setCreated(createdAt);
+        tmpComment.setModified(modifiedAt);
+        tmpComment.setID(Integer.parseInt(ID));
+        
+        String username_Session = (String) session.getAttribute("username");
+        
+        if (username_Session != null) {
+            User currentUser = null;
+            try {
+                currentUser = UserDB.getUser(username);
+                if (currentUser != null) {
+                    try {
+                        CommentDB.addComment(tmpComment);
+                        JSONResponse resp1 = new JSONResponse("Successfully add comment in dataBase", 200, tmpComment);
+                        resp.setStatus(200);
+                        out.print(gson.toJson(resp1));
+                    } catch (ClassNotFoundException e) {
+                        JSONErrorResponse resp1 = new JSONErrorResponse("Comment didn't add to the database", 500);
+                        resp.setStatus(500);
+                        out.print(gson.toJson(resp1));
+                        e.printStackTrace();
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+      }
+	
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        HttpSession session = req.getSession(true);
+
+        resp.addHeader("Access-Control-Allow-Origin", req.getHeader("Origin"));
+        resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+        resp.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+        resp.addHeader("Access-Control-Max-Age", "1728000");
+        resp.addHeader("Access-Control-Allow-Credentials", "true");
+        PrintWriter out = resp.getWriter();
+        
+        String ID = getPartValue(req.getPart("ID"));
+        
+        String username_Session = (String) session.getAttribute("username");
+        
+        User currentUser = null;
+        
+        try {
+            Comment tmpComment = CommentDB.getComment(Integer.parseInt(ID));
+            currentUser = UserDB.getUser(username_Session);
+
+            if(currentUser == null){
+                JSONErrorResponse resp1 = new JSONErrorResponse("You're not logged in", 400);
+                resp.setStatus(400);
+                out.print(gson.toJson(resp1));
+            }
+            if(tmpComment == null){
+                JSONErrorResponse resp1 = new JSONErrorResponse("Comment not found", 404);
+                resp.setStatus(404);
+                out.print(gson.toJson(resp1));
+            }else if (currentUser.getUserName().equals(tmpComment.getUserName())) {
+                CommentDB.deleteComment(Integer.parseInt(ID));
+                JSONErrorResponse resp1 = new JSONErrorResponse("Successfully delete comment", 200);
+                resp.setStatus(200);
+                out.print(gson.toJson(resp1));
+            }else{
+                JSONErrorResponse resp1 = new JSONErrorResponse("comment is not yours to delete", 404);
+                resp.setStatus(400);
+                out.print(gson.toJson(resp1));
+            }
+            
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            JSONErrorResponse resp1 = new JSONErrorResponse("Server Error", 500);
+            resp.setStatus(500);
+            out.print(gson.toJson(resp1));
+        }
+
+
+
+    }
+	
+
+}
