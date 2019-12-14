@@ -109,6 +109,8 @@ const Post = (post) => {
                 </div>
             </div>`
 				: ``}
+
+					<div class="timeline-post-comments-container"></div>
         </div>
     `;
 };

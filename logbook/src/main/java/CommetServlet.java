@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +28,8 @@ import gr.csd.uoc.cs359.winter2019.logbook.model.User;
 /**
  * Servlet implementation class CommetServlet
  */
-@WebServlet("/CommetServlet")
+@WebServlet("/comments")
+@MultipartConfig
 public class CommetServlet extends HttpServlet {
 	
     private Gson gson = new Gson();
@@ -48,7 +50,7 @@ public class CommetServlet extends HttpServlet {
         resp.addHeader("Access-Control-Max-Age", "1728000");
         resp.addHeader("Access-Control-Allow-Credentials", "true");
         
-        String ID = req.getParameter("ID");
+        String ID = req.getParameter("postID");
         
         PrintWriter out = resp.getWriter();
         
@@ -70,7 +72,7 @@ public class CommetServlet extends HttpServlet {
             }
             if (currentUser != null) {
                 try {
-                    JSONResponse response = new JSONResponse("Comments Found", 200, CommentDB.getComment(Integer.parseInt(ID)));
+                    JSONResponse response = new JSONResponse("Comments Found", 200, CommentDB.getComments(Integer.parseInt(ID)));
                     out.print(gson.toJson(response));
 
                 } catch (ClassNotFoundException e) {
@@ -88,8 +90,6 @@ public class CommetServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		doGet(req, resp);
-		
 		resp.setContentType("application/json");
         HttpSession session = req.getSession(true);
 
@@ -104,9 +104,8 @@ public class CommetServlet extends HttpServlet {
         String postID = getPartValue(req.getPart("postID"));
         String comment = getPartValue(req.getPart("comment"));
         String createdAt = getPartValue(req.getPart("createdAt"));
-        String modifiedAt = getPartValue(req.getPart("modifiedAt"));
-        String ID = getPartValue(req.getPart("ID"));
-        
+        String modifiedAt = createdAt;
+
         Comment tmpComment = new Comment();
         
         tmpComment.setUserName(username);
@@ -114,13 +113,12 @@ public class CommetServlet extends HttpServlet {
         tmpComment.setComment(comment);
         tmpComment.setCreated(createdAt);
         tmpComment.setModified(modifiedAt);
-        tmpComment.setID(Integer.parseInt(ID));
         
         String username_Session = (String) session.getAttribute("username");
         
         if (username_Session != null) {
             User currentUser = null;
-            try {
+            try{
                 currentUser = UserDB.getUser(username);
                 if (currentUser != null) {
                     try {
@@ -153,7 +151,7 @@ public class CommetServlet extends HttpServlet {
         resp.addHeader("Access-Control-Allow-Credentials", "true");
         PrintWriter out = resp.getWriter();
         
-        String ID = getPartValue(req.getPart("ID"));
+        String ID = getPartValue(req.getPart("commentID"));
         
         String username_Session = (String) session.getAttribute("username");
         

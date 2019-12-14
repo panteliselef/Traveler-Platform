@@ -107,7 +107,11 @@ const ModalPost = (post, image, date, location) => {
 			? `
             <img class="timeline-post-image" src="${image}"/>
         `
-			: ``}
+      : ``}
+      
+        <div class="timeline-post-comments-container">
+          
+        </div>
     </div>
     ${location != null ? `<div class="timeline-modal-view-map"></div>` : ``}
     `;
@@ -162,7 +166,13 @@ const showTimelinePage = () => {
 				})
 				.join('');
 			mySPA.setState({ posts: result });
-			setDeleteListeners(result);
+      setDeleteListeners(result);
+      
+      result.forEach(post => {
+
+        showCreateComment(post.postID);
+        
+      });
 		}
 	});
 
