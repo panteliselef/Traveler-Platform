@@ -14,10 +14,14 @@ const ProfilePage = (user) => {
 		</div>
 		<div class="profile-container">
 			<div class="profile-whois">
-				<div class="image-placeholder big">
-						${user.userName[0]}${user.userName[1]}
+				<div style="display:flex;align-items:center">
+					<div class="image-placeholder big">
+							${user.userName[0]}${user.userName[1]}
+					</div>
+					<div class="profile-username">${user.userName}</div>
 				</div>
-				<div class="profile-username">${user.userName}</div>
+				<div id="travel-distance">
+				</div>
 			</div>
 			<div class="profile">				
 				${Object.keys(user)
@@ -72,7 +76,7 @@ const showProfilePage = (username) => {
 	};
 
 	const fetchPosts = () => {
-		console.log('fetching posts');
+		const NOMATISM_URL = `https://nominatim.openstreetmap.org/search`;
 		ajaxRequest(
 			'GET',
 			`/logbook/master?redirect=post&mode=top_ten&username=${username}`,
@@ -84,6 +88,67 @@ const showProfilePage = (username) => {
 						return Post(post);
 					})
 					.join('');
+
+				let user = mySPA.getState('user');
+				console.warn('Country', user.town, user.country);
+
+				ajaxRequest('GET', `${NOMATISM_URL}?q=${user.town},${user.country}&format=json`, null, (res) => {
+					if (res.length > 0) {
+						// at least a match has been found
+						let { lat, lon } = res[0];
+
+						let posts = [];
+						result.forEach((post) => {
+							if (
+								post.latitude &&
+								post.latitude != 'null' &&
+								post.longitude &&
+								post.longitude != 'null'
+							) {
+								posts.push(post);
+							}
+						});
+
+						let str = posts
+							.map((post) => {
+								return `${post.longitude},${post.latitude}`;
+							})
+							.join(';');
+
+						ajaxRequest(
+							'GET',
+							`http://router.project-osrm.org/route/v1/driving/${lon},${lat};${str}?overview=false`,
+							null,
+							({ code, routes, waypoints }) => {
+								if (code != 'Ok') return;
+
+								let distance = '';
+								if(routes[0].distance*2 > 1000){
+									distance = `${(routes[0].distance*2/1000).toFixed(1)}km`
+								}else{
+									distance = `${(routes[0].distance*2).toFixed(1)}m`;
+								}
+								document.getElementById('travel-distance').innerText = distance
+							}
+						);
+
+						// fetch(`http://router.project-osrm.org/route/v1/driving/${lon},${lat};${str}?overview=false`)
+						// 	.then((res) => res.json())
+						// 	.then(() => {});
+						// result.forEach((post) => {
+						// 	console.log('LOCATION', post.latitude, post.longitude);
+
+						// 	// ajaxRequest(
+						// 	// 	'GET',
+						// 	// 	`http://router.project-osrm.org/route/v1/driving/${lon},${lat};${post.latitude},${post.latitude}?overview=false`,null,(res)=>{
+						// 	// 		console.log(res);
+						// 	// 	}
+						// 	// );
+						// });
+					} else {
+						console.warn('No home');
+					}
+				});
 				mySPA.setState({ posts: result });
 				setDeleteListeners(result);
 			}
@@ -93,7 +158,7 @@ const showProfilePage = (username) => {
 	if (user) {
 		// user exists on state
 		rootDiv.innerHTML = ProfilePage(user);
-		document.getElementById("profile-timeline-posts").innerHTML = PostPlaceholder().repeat(3);
+		document.getElementById('profile-timeline-posts').innerHTML = PostPlaceholder().repeat(3);
 		registerEventListeners();
 		fetchPosts();
 
@@ -110,7 +175,7 @@ const showProfilePage = (username) => {
 				if (statusCode === 200) {
 					rootDiv.innerHTML = ProfilePage(result);
 
-					document.getElementById("profile-timeline-posts").innerHTML = PostPlaceholder().repeat(3);
+					document.getElementById('profile-timeline-posts').innerHTML = PostPlaceholder().repeat(3);
 					if (username === mySPA.getState('user').userName) {
 						let mainTag = document.getElementsByClassName('profile-container')[0].children[2];
 						showCreatPost(mainTag);

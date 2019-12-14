@@ -14,7 +14,8 @@ function ajaxRequest(method, url, dataToServer, callback,isAsync=true) {
 		}
 	};
 	xmlReq.open(method, url, isAsync);
-	xmlReq.setRequestHeader('Access-Control-Allow-Origin','*');
+	// xmlReq.setRequestHeader('Access-Control-Allow-Origin','*');
+	// xmlReq.setRequestHeader('access-control-allow-origin','*');
 	xmlReq.addEventListener('load', onloadHandler);
 	xmlReq.addEventListener('error', onloadHandler);
 	xmlReq.send(dataToServer);

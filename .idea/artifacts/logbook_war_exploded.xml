@@ -14,7 +14,27 @@
           <element id="module-output" name="logbook" />
         </element>
         <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.8.6" />
           <element id="library" level="project" name="Maven: org.postgresql:postgresql:42.2.8" />
+          <element id="library" level="project" name="Maven: com.sparkjava:spark-core:2.8.0" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.25" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-server:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: javax.servlet:javax.servlet-api:3.1.0" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-http:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-util:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-io:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-webapp:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-xml:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-servlet:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-security:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty.websocket:websocket-server:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty.websocket:websocket-common:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty.websocket:websocket-client:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-client:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty.websocket:websocket-servlet:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.eclipse.jetty.websocket:websocket-api:9.4.12.v20180830" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-log4j12:1.7.26" />
+          <element id="library" level="project" name="Maven: log4j:log4j:1.2.17" />
         </element>
       </element>
       <element id="directory" name="META-INF">

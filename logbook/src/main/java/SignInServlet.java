@@ -108,7 +108,7 @@ public class SignInServlet extends HttpServlet {
                         if (currentUser != null && currentUser.getPassword().equals(password)) {
 
                             session.setAttribute("username", username);
-                            session.setMaxInactiveInterval(60 * 60 * 100); // 100 hours
+                            session.setMaxInactiveInterval(60 * 10); // 10 minutes
                             JSONResponse response = new JSONResponse("Signed in successfully", 200, currentUser);
                             resp.setStatus(200);
                             out.print(gson.toJson(response));

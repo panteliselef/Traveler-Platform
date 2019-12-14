@@ -7,7 +7,7 @@ const CreatePost = () => {
                 <div class="image-placeholder">
                  ${user[0]}${user[1]}
                 </div>
-                <textarea id="post-area" placeholder="What's on your mind, Pantelis ?"></textarea> 
+                <textarea id="post-area" placeholder="What's on your mind, ${mySPA.getState('user').firstName} ?"></textarea> 
             </div>
             <div id="timeline-create-post-image-container" class="timeline-create-post-image-container">
 <!--                <div class="image-overlay"></div>-->

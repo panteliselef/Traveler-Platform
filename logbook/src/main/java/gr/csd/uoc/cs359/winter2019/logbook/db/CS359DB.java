@@ -18,8 +18,9 @@ public class CS359DB {
     private static final String URL = "jdbc:postgresql://139.91.183.23";
     private static final String DATABASE = "logbook";
     private static final int PORT = 5432;
-    private static final String UNAME = "CHECK USERNAME IN GIT README"; // Share your repo to give you the credentials
-    private static final String PASSWD = "CHECK PASSWD IN GIT README";  // Share your repo to give you the credentials
+    private static final String UNAME = "csd3942"; // Share your repo to give you the credentials
+    private static final String PASSWD = "3RN%G2xh";  // Share your repo to give you the credentials
+
 
     /**
      * Attempts to establish a database connection Using mariadb
