@@ -2,6 +2,8 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -36,12 +38,55 @@ public class CommetServlet extends HttpServlet {
     
     }
    
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setContentType("application/json");
+        HttpSession session = req.getSession(true);
+
+        resp.addHeader("Access-Control-Allow-Origin", req.getHeader("Origin"));
+        resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+        resp.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+        resp.addHeader("Access-Control-Max-Age", "1728000");
+        resp.addHeader("Access-Control-Allow-Credentials", "true");
+        
+        String ID = req.getParameter("ID");
+        
+        PrintWriter out = resp.getWriter();
+        
+        String username_Session = (String) session.getAttribute("username");
+
+
+        if (username_Session == null) {
+            JSONErrorResponse jsonErrorResponse = new JSONErrorResponse("You are not logged in", 400);
+            resp.setStatus(400);
+            out.print(gson.toJson(jsonErrorResponse));
+            Logger.getLogger(SignInServlet.class.getName()).log(Level.INFO, "No cookie with username");
+        }else {
+        	Logger.getLogger(SignInServlet.class.getName()).log(Level.INFO, "cookie with username");
+            User currentUser = null;
+            try {
+                currentUser = UserDB.getUser(username_Session);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            if (currentUser != null) {
+                try {
+                    JSONResponse response = new JSONResponse("Comments Found", 200, CommentDB.getComment(Integer.parseInt(ID)));
+                    out.print(gson.toJson(response));
+
+                } catch (ClassNotFoundException e) {
+
+                    JSONErrorResponse errorResponse = new JSONErrorResponse("Data may no longer be available", 400);
+                    out.print(gson.toJson(errorResponse));
+                    e.printStackTrace();
+                }
+            } else {
+            	JSONResponse response = new JSONResponse("User not exist", 400, null);
+                out.print(gson.toJson(response));
+            }
+        }
 	}
 
-
+	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req, resp);
 		
@@ -96,6 +141,7 @@ public class CommetServlet extends HttpServlet {
         }
       }
 	
+	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
         HttpSession session = req.getSession(true);
@@ -143,9 +189,73 @@ public class CommetServlet extends HttpServlet {
             resp.setStatus(500);
             out.print(gson.toJson(resp1));
         }
+    }
+	
+	@Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        HttpSession session = req.getSession(true);
 
+        resp.addHeader("Access-Control-Allow-Origin", req.getHeader("Origin"));
+        resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+        resp.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+        resp.addHeader("Access-Control-Max-Age", "1728000");
+        resp.addHeader("Access-Control-Allow-Credentials", "true");
+        PrintWriter out = resp.getWriter();
+        
+        
+        String username = getPartValue(req.getPart("userName"));
+        String postID = getPartValue(req.getPart("postID"));
+        String comment = getPartValue(req.getPart("comment"));
+        String createdAt = getPartValue(req.getPart("createdAt"));
+        String modifiedAt = getPartValue(req.getPart("modifiedAt"));
+        String ID = getPartValue(req.getPart("ID"));
+        
+        Comment UpdateComment = new Comment();
+        
+        UpdateComment.setUserName(username);
+        UpdateComment.setPostID(Integer.parseInt(postID));
+        UpdateComment.setComment(comment);
+        UpdateComment.setCreated(createdAt);
+        UpdateComment.setModified(modifiedAt);
+        UpdateComment.setID(Integer.parseInt(ID));
+        
+        String username_Session = (String) session.getAttribute("username");
+        User currentUser = null;
+        
+        
+        try {
+            Comment tmpComment = CommentDB.getComment(Integer.parseInt(ID));
+            currentUser = UserDB.getUser(username_Session);
 
-
+            if(currentUser == null){
+                JSONErrorResponse resp1 = new JSONErrorResponse("You're not logged in", 400);
+                resp.setStatus(400);
+                out.print(gson.toJson(resp1));
+            }
+            if(tmpComment == null){
+                JSONErrorResponse resp1 = new JSONErrorResponse("Comment not found", 404);
+                resp.setStatus(404);
+                out.print(gson.toJson(resp1));
+            }else if (currentUser.getUserName().equals(tmpComment.getUserName())) {
+                CommentDB.updateComment(UpdateComment);
+                JSONErrorResponse resp1 = new JSONErrorResponse("Successfully update comment", 200);
+                resp.setStatus(200);
+                out.print(gson.toJson(resp1));
+            }else{
+                JSONErrorResponse resp1 = new JSONErrorResponse("comment is not yours to update", 404);
+                resp.setStatus(400);
+                out.print(gson.toJson(resp1));
+            }
+            
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            JSONErrorResponse resp1 = new JSONErrorResponse("Server Error", 500);
+            resp.setStatus(500);
+            out.print(gson.toJson(resp1));
+        }
+        
+       
     }
 	
 
