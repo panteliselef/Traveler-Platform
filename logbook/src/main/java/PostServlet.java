@@ -1,5 +1,7 @@
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,10 +17,12 @@ import javax.servlet.http.Part;
 import com.google.gson.Gson;
 
 import gr.csd.uoc.cs359.winter2019.logbook.db.PostDB;
+import gr.csd.uoc.cs359.winter2019.logbook.db.RatingDB;
 import gr.csd.uoc.cs359.winter2019.logbook.db.UserDB;
 import gr.csd.uoc.cs359.winter2019.logbook.model.JSONErrorResponse;
 import gr.csd.uoc.cs359.winter2019.logbook.model.JSONResponse;
 import gr.csd.uoc.cs359.winter2019.logbook.model.Post;
+import gr.csd.uoc.cs359.winter2019.logbook.model.Rating;
 import gr.csd.uoc.cs359.winter2019.logbook.model.User;
 
 /**
@@ -73,14 +77,54 @@ public class PostServlet extends HttpServlet {
                     JSONResponse response = null;
                     if (mode != null && mode.equals("top_ten")) {
                         if (username != null) {
-                            // TODO: check if username exists
 //                            PostDB.getTop10RecentPostsOfUser(username);
                             response = new JSONResponse("Posts Found", 200, PostDB.getTop10RecentPostsOfUser(username));
                         } else {
 //                            PostDB.getTop10RecentPosts();
                             response = new JSONResponse("Posts Found", 200, PostDB.getTop10RecentPosts());
                         }
-                    } else {
+                    }else if(mode!= null && mode.contentEquals("top_ten_byRating")) {
+                    	if(username != null) {
+                    		List<Post> Posts = new ArrayList<>();
+                    		List<Rating> PostRatings = new ArrayList<>();
+                    		List<Integer> PostRating = new ArrayList<>();
+                    		List<Post> SortedPosts = new ArrayList<>();
+                    		
+                    		Posts = PostDB.getTop10RecentPosts();
+                    		
+                    		int avg = 0;
+                    		for(Post post: Posts) {
+                      			try {
+        							PostRatings = RatingDB.getRatings(post.getPostID());
+        							
+        							for(Rating rating: PostRatings) {
+        								avg+=rating.getRate();
+        								
+        							}
+        							avg = avg / PostRatings.size();
+        						} catch (ClassNotFoundException e) {
+        							e.printStackTrace();
+        						}
+                      			PostRating.add(avg);
+                    		}
+    
+    
+                    		
+                    		for(int j=5; j>0; j--) {
+                    			for(int i=0; i<Posts.size();i++) {
+                    				if(PostRating.get(i) == j) {
+                    					SortedPosts.add(Posts.get(i));
+                    				}
+                    			}
+                    		}
+                    		response = new JSONResponse("Posts Found", 200, SortedPosts);
+                    	}
+                    	
+                    	
+                    	
+                    	
+                    	// when we looking for a specific post
+                    }else{
                         if (postId != null) {
                             response = new JSONResponse("Post Found", 200, PostDB.getPost(Integer.parseInt(postId)));
                         }
